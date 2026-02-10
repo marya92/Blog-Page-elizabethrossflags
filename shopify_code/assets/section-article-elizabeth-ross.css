@@ -1,0 +1,370 @@
+/* Scoped styles (.erf-*) – base + adjustments for Figma YMAL + mobile hide RP */
+
+.erf-article {
+  --erf-font-heading: var(--font-heading-family, ui-serif, Georgia, 'Times New Roman', serif);
+  --erf-font-body: var(--font-body-family, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif);
+  --erf-color-text: #111827;
+  --erf-color-muted: #6b7280;
+  --erf-color-accent: #0f172a;
+  --erf-color-border: #e5e7eb;
+  --erf-color-bg-soft: #f3f4f6;
+
+  --erf-gap-sm: 12px;
+  --erf-gap: 16px;
+  --erf-gap-lg: 24px;
+  --erf-gap-xl: 32px;
+
+  --erf-title-size: clamp(30px, 4.2vw, 44px);
+  --erf-meta-size: 14px;
+
+  --erf-left-col: 240px;
+  --erf-right-col: 320px;
+  --erf-content-max: 1300px;
+}
+
+/* Breadcrumbs */
+.erf-article__breadcrumbs {
+  max-width: var(--erf-content-max);
+  margin: 0 auto var(--erf-gap);
+  padding: 0 var(--erf-gap);
+  font: 400 14px/1.4 var(--erf-font-body);
+  color: var(--erf-color-muted);
+}
+.erf-article__breadcrumbs a { color: inherit; text-decoration: none; }
+.erf-article__breadcrumbs ol {
+  color: #121212;
+  font-family: "Univers 59 Ultra Condensed";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 25.2px;
+  letter-spacing: 0.6px;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+}
+.erf-article__breadcrumbs li::after { content: "›"; margin: 0 8px; color: #9ca3af; }
+.erf-article__breadcrumbs li:last-child::after { content: ""; }
+
+/* Hero image */
+.erf-article__hero { width: 100%; overflow: hidden; margin-bottom: var(--erf-gap-lg); }
+.erf-article--hero-compact .erf-article__hero-img { max-height: 360px; object-fit: cover; width: 100%; }
+.erf-article--hero-medium  .erf-article__hero-img { max-height: 520px; object-fit: cover; width: 100%; }
+.erf-article--hero-large   .erf-article__hero-img { max-height: 680px; object-fit: cover; width: 100%; }
+
+/* 3-column grid */
+.erf-article__grid {
+  display: grid;
+  grid-template-columns: var(--erf-left-col) minmax(0, 1fr) var(--erf-right-col);
+  gap: var(--erf-gap-xl);
+  max-width: var(--erf-content-max);
+  margin: 0 auto;
+  padding: 0 var(--erf-gap);
+}
+
+/* LEFT column (TOC + share) */
+.erf-article__left { align-self: start; }
+.erf-toc__title { font: 600 16px/1.3 var(--erf-font-body); margin-bottom: 10px; color: var(--erf-color-text); }
+@media (max-width: 768px) { .erf-toc__title { display: none; } }
+@media (max-width: 576px) { .erf-toc__title { display: none; } }
+
+.erf-toc__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.erf-toc__item a {
+  text-decoration: none;
+  border-left: 2px solid var(--erf-color-border);
+  padding-left: 10px;
+  color: #121212;
+  font-family: Garamond;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28.8px;
+  letter-spacing: 0.6px;
+}
+.erf-toc__dropdown { display: none; }
+.erf-toc__summary {
+  display: flex; align-items: center; justify-content: space-between;
+  border: 1px solid var(--erf-color-border);
+  padding: 10px 12px; border-radius: 6px; cursor: pointer;
+  font: 600 14px/1.4 var(--erf-font-body); color: var(--erf-color-text);
+}
+.erf-icon--chev { width: 18px; height: 18px; }
+
+/* Share */
+.erf-share { display: grid; gap: 8px; color: var(--erf-color-text); margin-top: var(--erf-gap); }
+.erf-share__label { font: 600 14px/1.4 var(--erf-font-body); }
+.erf-share__links { display: flex; gap: 12px; flex-wrap: wrap; }
+.erf-btn-icon { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--erf-color-text); font: 500 14px/1.4 var(--erf-font-body); }
+.erf-icon { width: 16px; height: 16px; }
+
+/* CENTER column */
+.erf-article__title {
+  font: 700 var(--erf-title-size)/1.15 var(--erf-font-heading);
+  color: var(--erf-color-text);
+  margin: 0 0 6px;
+  color: #121212;
+  font-family: Garamond;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 52px;
+  letter-spacing: 0.6px;
+}
+.erf-article__header--align-center .erf-article__title { text-align: center; }
+.erf-article__meta {
+  display: flex; gap: 8px; align-items: center; color: var(--erf-color-muted);
+  font: 400 var(--erf-meta-size)/1.4 var(--erf-font-body); margin-bottom: 18px;
+}
+.erf-article__by1, .erf-article__by, .erf-article__date {
+  font-family: Garamond; font-size: 12px; font-weight: 400; line-height: 14.4px; letter-spacing: 1.3px; text-transform: uppercase;
+}
+.erf-article__by { color: #000; text-decoration: underline; }
+.erf-article__by1 { color: #000; }
+.erf-article__date { color: #121212; }
+.erf-article__dot { color: var(--erf-color-muted); }
+.erf-article__content {
+  color: #121212; font-family: "Univers 59 Ultra Condensed"; font-size: 16px; font-weight: 500;
+  line-height: 28.8px; letter-spacing: 0.6px;
+}
+.erf-article__content h2, .erf-article__content h3 {
+  color: #183C56; font-family: Garamond; font-size: 24px; font-weight: 700; line-height: 28.8px; letter-spacing: 0.6px; text-transform: uppercase;
+  scroll-margin-top: 90px;
+}
+
+/* Author */
+.erf-author__title { font: 700 16px/1.3 var(--erf-font-body); margin: 8px 0 10px; color: var(--erf-color-text); }
+.erf-author__card { display: grid; gap: 12px; padding: 16px; background: var(--erf-color-bg-soft); border-radius: 6px; }
+.erf-author__header { display: flex; align-items: center; gap: 12px; }
+.erf-author__avatar { width: 38px; height: 38px; aspect-ratio: 1 / 1; border-radius: 999px; object-fit: cover; }
+.erf-author__avatar_btitle { width: 18px; height: 18px; aspect-ratio: 1 / 1; border-radius: 999px; object-fit: cover; }
+.erf-author__name {
+  color: #121212; text-align: center; font-family: Garamond; font-size: 23.4px; font-weight: 400; line-height: 31.2px; letter-spacing: 0.6px;
+}
+.erf-author__biowrap { display: grid; gap: 8px; }
+.erf-author__bio {
+  color: #121212; font-family: "Univers 59 Ultra Condensed"; font-size: 16px; font-weight: 500; line-height: 28.8px; letter-spacing: 0.6px;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--erf-author-lines, 2); overflow: hidden;
+}
+.erf-author__bio.is-expanded { -webkit-line-clamp: unset; overflow: visible; }
+.erf-link {
+  background: none; border: none; padding: 0; cursor: pointer; text-decoration: none;
+  color: #131F48; font-family: "Univers 59 Ultra Condensed"; font-size: 16px; font-weight: 500; line-height: 28.8px; letter-spacing: 0.6px; text-align: left;
+}
+
+/* RIGHT – Related products */
+.erf-related__title { font: 700 16px/1.3 var(--erf-font-body); margin: 0 0 10px; color: var(--erf-color-text); }
+.erf-related__list { display: grid; gap: 16px; }
+.erf-related__empty { color: var(--erf-color-muted); font: 400 14px/1.4 var(--erf-font-body); }
+
+/* === Related Products – Figma card === */
+.erf-rp-card {
+  border: 1px solid var(--erf-color-border);
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+  display: grid;
+}
+.erf-rp-media { position: relative; display: block; }
+.erf-rp-media img { width: 100%; height: auto; display: block; aspect-ratio: 4/3; object-fit: cover; }
+.erf-rp-badge {
+  position: absolute; top: 10px; left: 10px; background: #1f2a44; color: #fff;
+  font: 700 12px/1.2 var(--erf-font-body); letter-spacing: .06em; padding: 6px 10px; border-radius: 4px;
+}
+.erf-rp-content { padding: 14px; display: grid; gap: 8px; }
+.erf-rp-title a {
+  text-decoration: none; color: #121212; font-family: Garamond; font-size: 14px; font-weight: 400; line-height: 16.9px; letter-spacing: 0.6px;
+}
+.erf-rp-rating { display: inline-flex; align-items: center; gap: 6px; color: #121212; font: 400 13px/1.2 var(--erf-font-body); }
+.erf-rp-star { width: 20px; height: 20px; color: #FFD200; }
+.erf-rp-star.is-on { color: #f59e0b; }
+.erf-rp-count { color: #6b7280; }
+.erf-rp-price { display: flex; gap: 8px; align-items: baseline; }
+.erf-rp-price-compare { text-decoration: line-through; color: #9ca3af; font: 400 13px/1.2 var(--erf-font-body); }
+.erf-rp-price-now {
+  color: #121212; font-family: Assistant; font-size: 16px; font-weight: 400; line-height: 22.4px; letter-spacing: 1px;
+}
+.erf-rp-btn {
+  display: inline-block; text-decoration: none; border-radius: 14px; background: #131F48; padding: 12px 18px;
+  color: #FFF; text-align: center; font-family: "Univers 59 Ultra Condensed"; font-size: 15px; font-weight: 500; line-height: 18px; letter-spacing: 1px;
+}
+.erf-rp-btn:hover { background: #121c33; }
+
+/* YMAL – desktop & tablet: 3 columns (no slider) */
+.erf-ymal { max-width: var(--erf-content-max); margin: var(--erf-gap-xl) auto; padding: 0 var(--erf-gap); }
+.erf-ymal__header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+.erf-ymal__title {
+  color: #121212;
+  font-family: Garamond;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 23px;
+  letter-spacing: 0.6px;
+}
+.erf-ymal__more {
+  text-decoration: none;
+  color: #131F48;
+  font-family: Assistant;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28.8px;
+  letter-spacing: 0.6px;
+}
+
+.erf-ymal__track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.erf-ymal__card { border: 1px solid var(--erf-color-border); border-radius: 6px; overflow: hidden; display: grid; background: #fff; }
+.erf-ymal__media img { width: 100%; height: auto; display: block; object-fit: cover; aspect-ratio: 16/9; }
+.erf-ymal__content { padding: 16px; display: grid; gap: 8px; }
+
+.erf-ymal__content--figma { background: #f3f4f6; padding: 22px 20px 24px; }
+.erf-ymal__heading--figma a {
+  text-decoration: none;
+  color: #121212;
+  display: inline-block;
+  font-family: Garamond;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 24px;
+  line-height: 30px;
+  text-align: center;
+  width: 100%;
+  word-break: break-word;
+font-style: normal;
+}
+.erf-ymal__meta--figma {
+  display: flex; gap: 10px; align-items: center; justify-content: center;
+  color: #121212;
+  font-family: Garamond;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+.erf-ymal__dot { color: #9ca3af; }
+.erf-ymal__excerpt {
+  color: #121212; font: 400 16px/1.6 "Univers 59 Ultra Condensed"; letter-spacing: 0.6px;
+  text-align: center; margin: 0 0 8px;
+}
+
+/* YMAL CTA (pill) */
+.erf-ymal-btn {
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 13px;
+  background: #131F48;
+  color: #fff;
+  padding: 14px 22px;
+  font: 600 16px/1.2 var(--erf-font-body);
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+  margin: 8px auto 0;
+  font-family: Assistant;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.erf-ymal-btn:hover { background: #121c33; }
+
+/* YMAL controls hidden by default (desktop/tablet) */
+.erf-ymal__controls { display: none; gap: 8px; justify-content: center; margin-top: 8px; }
+.erf-ymal__prev, .erf-ymal__next {
+  background: #fff; border: 1px solid var(--erf-color-border); border-radius: 999px; width: 36px; height: 36px;
+  display: inline-grid; place-items: center; color: var(--erf-color-text);
+}
+
+/* Back link */
+.erf-article__backwrap { max-width: var(--erf-content-max); margin: 12px auto 24px; padding: 0 var(--erf-gap); text-align: center; }
+.erf-article__back {
+  color: #131F48; text-align: center; font-family: "Univers 59 Ultra Condensed";
+  font-size: 18px; font-weight: 500; line-height: 32.4px; letter-spacing: 0.6px; text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .erf-article__grid { grid-template-columns: 1fr; gap: var(--erf-gap-lg); }
+  .erf-toc__list--desktop { display: none; }
+  .erf-toc__dropdown { display: block; }
+
+  /* Hide Related Products on tablet/mobile per Figma */
+  .erf-article__right { display: none; }
+
+  /* YMAL remains 3 columns on tablet (no slider) */
+  .erf-ymal__track { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+  /* YMAL: mobile slider – one card visible with peek of next/prev */
+  .erf-ymal { padding: 0 10px; }
+  .erf-ymal__track {
+    /* CRITICAL: unset the desktop/template columns so auto-columns take over */
+    grid-template-columns: unset !important;
+    grid-template-rows: unset !important;
+
+    grid-auto-flow: column;
+    grid-auto-columns: 92%;
+    gap: 14px;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 10px;
+    scroll-padding-right: 10px;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+  .erf-ymal__card {
+    scroll-snap-align: start;
+    width: 100%;
+    min-width: 0; /* prevent overflow narrowing */
+  }
+
+  /* Tighter mobile typography to avoid overflow */
+  .erf-ymal__heading--figma a { font-size: 20px; letter-spacing: 0.04em; }
+  .erf-ymal__meta--figma { font-size: 10px; }
+  .erf-ymal__excerpt { font-size: 14px; line-height: 1.55; }
+
+  .erf-ymal-btn { max-width: none; font-size: 15px; padding: 12px 16px; }
+
+  /* Show slider controls on mobile */
+  .erf-ymal__controls { display: flex; }
+}
+
+/* === Mobile font match (scoped, no :root/html/body) ===
+   Ensures mobile uses the same families as desktop, without affecting other pages. */
+@media (max-width: 768px) {
+  /* Headings + meta */
+  .erf-article .erf-article__title,
+  .erf-article .erf-article__content h1,
+  .erf-article .erf-article__content h2,
+  .erf-article .erf-article__content h3,
+  .erf-article .erf-ymal__heading--figma a,
+  .erf-article .erf-author__name,
+  .erf-article .erf-article__by1,
+  .erf-article .erf-article__by,
+  .erf-article .erf-article__date,
+  .erf-article .erf-ymal__meta--figma {
+    font-family: Garamond, "EB Garamond", ui-serif, Georgia, "Times New Roman", serif !important;
+  }
+
+  /* Body text + UI */
+  .erf-article .erf-article__content,
+  .erf-article .erf-article__breadcrumbs ol,
+  .erf-article .erf-toc__item a,
+  .erf-article .erf-ymal__excerpt,
+  .erf-article .erf-ymal-btn,
+  .erf-article .erf-link,
+  .erf-article .erf-rp-btn,
+  .erf-article .erf-related__empty {
+    font-family: "Univers 59 Ultra Condensed", Assistant, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  }
+
+  /* Optional: keep button/link weights consistent on mobile */
+  .erf-article .erf-ymal-btn,
+  .erf-article .erf-link { font-weight: 600 !important; }
+}

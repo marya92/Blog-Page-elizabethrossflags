@@ -1,0 +1,55 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-article-elizabeth-ross",
+      "blocks": {
+        "toc-1": {
+          "type": "toc_item",
+          "settings": {
+            "text": "Section 1",
+            "target_id": "section-1"
+          }
+        }
+      },
+      "block_order": [
+        "toc-1"
+      ],
+      "settings": {
+        "show_breadcrumbs": true,
+        "content_max_width": 1100,
+        "desktop_left_width": 240,
+        "desktop_right_width": 320,
+        "hero_height": "large",
+        "title_align": "left",
+        "show_toc": true,
+        "toc_title": "In this article:",
+        "toc_mode": "auto",
+        "author_title": "About the author:",
+        "author_expand_lines": 2,
+        "enable_related": true,
+        "related_heading": "Related Products",
+        "related_max": 4,
+        "enable_ymal": true,
+        "ymal_heading": "You may also like",
+        "ymal_learn_more_text": "Learn More",
+        "ymal_cta_text": "Read  More",
+        "ymal_limit": 3,
+        "mobile_order_related_above_ymal": true,
+        "show_back_link_bottom": true,
+        "back_link_text": "Back to blog"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

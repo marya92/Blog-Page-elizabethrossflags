@@ -1,0 +1,425 @@
+{% comment %}
+Elizabeth Ross Flags – Article section (Figma aligned)
+
+Key behaviors:
+- Related Products: custom Figma-like card and hidden on tablet/mobile (<=1024px).
+- YMAL: Figma-style blog cards; show 3 cards in a 3-column grid on desktop/tablet (no slider).
+         On mobile (<=768px) becomes a horizontal slider: one full card visible with a peek of next/prev.
+- YMAL tag support with fallback to recent posts if no match.
+- Author toggle + TOC + Share preserved.
+{% endcomment %}
+{{ 'section-article-elizabeth-ross.css' | asset_url | stylesheet_tag }}
+{{ 'article-elizabeth-ross.js' | asset_url | script_tag }}
+
+{%- assign ns = 'custom' -%}
+
+{%- assign related_products_mf = article.metafields[ns]['related_products'] -%}
+{%- assign related_products_list = related_products_mf.value -%}
+{%- if related_products_list == blank -%}
+  {%- assign related_products_list = related_products_mf.references -%}
+{%- endif -%}
+
+{%- assign author_bio = article.metafields[ns]['author_bio'] -%}
+{%- assign author_avatar = article.metafields[ns]['author_avatar'] -%}
+{%- assign ymal_tag = article.metafields[ns]['ymal_tag'] | default: '' -%}
+
+<section class="erf-article erf-article--hero-{{ section.settings.hero_height }}"
+  style="--erf-content-max: {{ section.settings.content_max_width }}px; --erf-left-col: {{ section.settings.desktop_left_width }}px; --erf-right-col: {{ section.settings.desktop_right_width }}px;"
+>
+  {%- if section.settings.show_breadcrumbs -%}
+    <nav class="erf-article__breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="{{ routes.root_url }}">Home</a></li>
+        <li><a href="{{ blog.url }}">Blog</a></li>
+        <li aria-current="page">{{ article.title }}</li>
+      </ol>
+    </nav>
+  {%- endif -%}
+
+  {%- if article.image -%}
+    <div class="erf-article__hero">
+      <img
+        class="erf-article__hero-img"
+        src="{{ article.image | image_url: width: 2400 }}"
+        srcset="
+          {{ article.image | image_url: width: 800 }} 800w,
+          {{ article.image | image_url: width: 1200 }} 1200w,
+          {{ article.image | image_url: width: 1600 }} 1600w,
+          {{ article.image | image_url: width: 2000 }} 2000w,
+          {{ article.image | image_url: width: 2400 }} 2400w
+        "
+        sizes="(max-width: 768px) 100vw, var(--erf-content-max)"
+        alt="{{ article.image.alt | escape }}"
+        loading="lazy"
+      >
+    </div>
+  {%- endif -%}
+
+  <div class="erf-article__grid">
+    <!-- LEFT: TOC + Share -->
+    <aside class="erf-article__left" id="erf-left">
+      <div class="erf-toc">
+        <div class="erf-toc__title">{{ section.settings.toc_title }}</div>
+        <ul class="erf-toc__list erf-toc__list--desktop" data-auto-toc></ul>
+        <details class="erf-toc__dropdown">
+          <summary class="erf-toc__summary">
+            {{ section.settings.toc_title }}
+            <svg class="erf-icon erf-icon--chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          </summary>
+          <ul class="erf-toc__list erf-toc__list--mobile" data-auto-toc></ul>
+        </details>
+      </div>
+
+      <div class="erf-share">
+        <span class="erf-share__label">Share</span>
+        {%- assign share_url = shop.url | append: article.url -%}
+        <div class="erf-share__links">
+          <a class="erf-btn-icon" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">
+            <svg class="erf-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h3V0h-3c-3.3 0-6 2.7-6 6v3H6v3h3v9h3v-9h3l1-3h-4V6c0-1.7 1.3-3 3-3z" fill="currentColor"/></svg>
+            <span>Facebook</span>
+          </a>
+          <a class="erf-btn-icon" href="https://twitter.com/intent/tweet?url={{ share_url | url_encode }}&text={{ article.title | url_encode }}" target="_blank" rel="noopener noreferrer" aria-label="Tweet">
+            <svg class="erf-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 5.8c-.7.3-1.4.5-2.2.6.8-.5 1.4-1.3 1.7-2.3-.7.5-1.6.9-2.4 1.1C18.3 4.5 17.2 4 16 4c-2.3 0-4.1 1.9-4.1 4.2 0 .3 0 .7 .1 1C8.5 9.1 6.2 7.9 4.6 6c-.4 .7-.6 1.5-.6 2.3 0 1.5 .7 2.9 1.9 3.7-.6 0-1.3-.2-1.8-.5v.1c0 2.1 1.5 3.8 3.4 4.2-.4 .1-.8 .2-1.2 .2-.3 0-.6 0-.8-.1.6 1.8 2.3 3.1 4.3 3.1-1.6 1.3-3.6 2.1-5.8 2.1-.4 0-.7 0-1.1-.1 2.1 1.4 4.6 2.2 7.3 2.2 8.7 0 13.5-7.3 13.5-13.7v-.6c.9-.7 1.6-1.4 2.2-2.3z" fill="currentColor"/></svg>
+            <span>Tweet</span>
+          </a>
+          <a class="erf-btn-icon" href="https://pinterest.com/pin/create/button/?url={{ share_url | url_encode }}{% if article.image %}&media={{ article.image | image_url: width: 1200 | url_encode }}{% endif %}&description={{ article.title | url_encode }}" target="_blank" rel="noopener noreferrer" aria-label="Pin it">
+            <svg class="erf-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7 2 3 6 3 11c0 3.7 2.5 6.8 6 7.8-.1-.7-.2-1.9 0-2.7l1.4-6c-.3-.6-.5-1.6-.5-2.3 0-1.9 1.1-3.3 2.5-3.3 1.2 0 1.8 .9 1.8 2 0 1.2-.8 3-1.2 4.7-.3 1 .7 1.9 1.7 1.9 2.1 0 3.7-2.2 3.7-5.3 0-2.8-2-4.8-4.9-4.8-3.3 0-5.3 2.4-5.3 5 0 1 .4 2.1 1 2.7 .1 .1 .1 .2 .1 .4l-.4 1.6c-.1 .3-.3 .4-.6 .3-1.8-.7-3-2.6-3-4.8C6 6.2 8.8 3 13 3c4.1 0 7.1 2.9 7.1 6.7 0 4.3-2.7 7.4-6.7 7.4-1.3 0-2.6-.7-3-1.5l-.8 3.1c-.3 1.1-1 2.5-1.5 3.4.9 .3 1.8 .4 2.8 .4 5 0 9-4 9-9S17 2 12 2z" fill="currentColor"/></svg>
+            <span>Pin it</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER -->
+    <main class="erf-article__center">
+      <header class="erf-article__header erf-article__header--align-{{ section.settings.title_align }}">
+        <h1 class="erf-article__title">{{ article.title }}</h1>
+        <div class="erf-article__meta">
+          {%- if article.author -%}
+            {%- if author_avatar -%}
+              <img class="erf-author__avatar_btitle " src="{{ author_avatar | image_url: width: 160 }}" alt="{{ article.author | escape }}">
+            {%- endif -%}
+            <span class="erf-article__by1">By</span> <span class="erf-article__by">{{ article.author }}</span>
+          {%- endif -%}
+          <span class="erf-article__dot">•</span>
+          <span class="erf-article__date">{{ article.published_at | default: article.created_at | date: "%B %d, %Y" }}</span>
+        </div>
+      </header>
+
+      <article class="erf-article__content rte" id="erf-article-content">
+        {{ article.content }}
+      </article>
+
+      <!-- Author -->
+      <section class="erf-author">
+        <h2 class="erf-author__title">{{ section.settings.author_title }}</h2>
+        <div class="erf-author__card" data-lines="{{ section.settings.author_expand_lines }}">
+          <div class="erf-author__header">
+            {%- if author_avatar -%}
+              <img class="erf-author__avatar" src="{{ author_avatar | image_url: width: 160 }}" alt="{{ article.author | escape }}">
+            {%- endif -%}
+            <div class="erf-author__name">{{ article.author }}</div>
+          </div>
+          <div class="erf-author__biowrap">
+            <div class="erf-author__bio">
+              {%- if author_bio -%}
+                {{ author_bio }}
+              {%- else -%}
+                Add the author bio in article metafield {{ ns }}.author_bio.
+              {%- endif -%}
+            </div>
+            <button type="button" class="erf-link erf-author__toggle" data-toggle="author">
+              Learn More <img src="https://cdn.shopify.com/s/files/1/0898/6932/0496/files/right_arrow.svg?v=1770710792" style="margin-bottom: -5px;">
+            </button>
+          </div>
+        </div>
+
+        <div class="erf-share erf-share--bottom">
+          <span class="erf-share__label">Share</span>
+          {%- assign share_url = shop.url | append: article.url -%}
+          <div class="erf-share__links">
+            <a class="erf-btn-icon" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener noreferrer">
+              <svg class="erf-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h3V0h-3c-3.3 0-6 2.7-6 6v3H6v3h3v9h3v-9h3l1-3h-4V6c0-1.7 1.3-3 3-3z" fill="currentColor"/></svg>
+              <span>Facebook</span>
+            </a>
+            <a class="erf-btn-icon" href="https://twitter.com/intent/tweet?url={{ share_url | url_encode }}&text={{ article.title | url_encode }}" target="_blank" rel="noopener noreferrer">
+              <svg class="erf-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 5.8c-.7 .3-1.4 .5-2.2 .6.8-.5 1.4-1.3 1.7-2.3-.7 .5-1.6 .9-2.4 1.1C18.3 4.5 17.2 4 16 4c-2.3 0-4.1 1.9-4.1 4.2 0 .3 0 .7 .1 1C8.5 9.1 6.2 7.9 4.6 6c-.4 .7-.6 1.5-.6 2.3 0 1.5 .7 2.9 1.9 3.7-.6 0-1.3-.2-1.8-.5v.1c0 2.1 1.5 3.8 3.4 4.2-.4 .1-.8 .2-1.2 .2-.3 0-.6 0-.8-.1.6 1.8 2.3 3.1 4.3 3.1-1.6 1.3-3.6 2.1-5.8 2.1-.4 0-.7 0-1.1-.1 2.1 1.4 4.6 2.2 7.3 2.2 8.7 0 13.5-7.3 13.5-13.7v-.6c.9-.7 1.6-1.4 2.2-2.3z" fill="currentColor"/></svg>
+              <span>Tweet</span>
+            </a>
+            <a class="erf-btn-icon" href="https://pinterest.com/pin/create/button/?url={{ share_url | url_encode }}{% if article.image %}&media={{ article.image | image_url: width: 1200 | url_encode }}{% endif %}&description={{ article.title | url_encode }}" target="_blank" rel="noopener noreferrer">
+              <svg class="erf-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7 2 3 6 3 11c0 3.7 2.5 6.8 6 7.8-.1-.7-.2-1.9 0-2.7l1.4-6c-.3-.6-.5-1.6-.5-2.3 0-1.9 1.1-3.3 2.5-3.3 1.2 0 1.8 .9 1.8 2 0 1.2-.8 3-1.2 4.7-.3 1 .7 1.9 1.7 1.9 2.1 0 3.7-2.2 3.7-5.3 0-2.8-2-4.8-4.9-4.8-3.3 0-5.3 2.4-5.3 5 0 1 .4 2.1 1 2.7 .1 .1 .1 .2 .1 .4l-.4 1.6c-.1 .3-.3 .4-.6 .3-1.8-.7-3-2.6-3-4.8C6 6.2 8.8 3 13 3c4.1 0 7.1 2.9 7.1 6.7 0 4.3-2.7 7.4-6.7 7.4-1.3 0-2.6-.7-3-1.5l-.8 3.1c-.3 1.1-1 2.5-1.5 3.4.9 .3 1.8 .4 2.8 .4 5 0 9-4 9-9S17 2 12 2z" fill="currentColor"/></svg>
+              <span>Pin it</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT: Related Products -->
+    {%- if section.settings.enable_related -%}
+      <aside class="erf-article__right" id="erf-related">
+        <h2 class="erf-related__title">{{ section.settings.related_heading }}</h2>
+
+        {% assign rendered_count = 0 %}
+
+        {%- if related_products_list and related_products_list.size > 0 -%}
+          <div class="erf-related__list">
+            {%- for product in related_products_list limit: section.settings.related_max -%}
+              {%- if product and product.title -%}
+                {%- assign badge_exclusive = false -%}
+                {%- for t in product.tags -%}
+                  {%- if t == 'exclusive' or t == 'Exclusive' or t == 'EXCLUSIVE' -%}
+                    {%- assign badge_exclusive = true -%}
+                  {%- endif -%}
+                {%- endfor -%}
+
+                {%- assign rating_val = product.metafields.reviews.rating.value | default: product.metafields.reviews.rating -%}
+                {%- assign rating_count = product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count -%}
+
+                <article class="erf-rp-card">
+                  <a class="erf-rp-media" href="{{ product.url }}">
+                    {%- if product.featured_image -%}
+                      <img
+                        src="{{ product.featured_image | image_url: width: 600 }}"
+                        alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                        loading="lazy"
+                      >
+                    {%- endif -%}
+                    {%- if badge_exclusive -%}
+                      <span class="erf-rp-badge">EXCLUSIVE</span>
+                    {%- endif -%}
+                  </a>
+
+                  <div class="erf-rp-content">
+                    <h3 class="erf-rp-title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+
+                    {%- if rating_val and rating_count -%}
+                      <div class="erf-rp-rating" aria-label="Rated {{ rating_val }} out of 5">
+                        {%- assign rounded = rating_val | default: 0 | plus: 0 -%}
+                        {%- for i in (1..5) -%}
+                          <svg class="erf-rp-star{% if i <= rounded %} is-on{% endif %}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.2 3.7-1.6-6.9 5.4-4.7-7.1-.6L12 2 9.1 8.8 2 9.4l5.4 4.7-1.6 6.9z" fill="currentColor"/></svg>
+                        {%- endfor -%}
+                        <span class="erf-rp-count">({{ rating_count }})</span>
+                      </div>
+                    {%- endif -%}
+
+                    <div class="erf-rp-price">
+                      {%- if product.compare_at_price_max > product.price -%}
+                        <span class="erf-rp-price-compare">{{ product.compare_at_price | money }}</span>
+                      {%- endif -%}
+                      <span class="erf-rp-price-now">{{ product.price | money }}</span>
+                    </div>
+
+                    <a class="erf-rp-btn" href="{{ product.url }}">Shop Now</a>
+                  </div>
+                </article>
+
+                {% assign rendered_count = rendered_count | plus: 1 %}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- if rendered_count == 0 and related_products_mf and related_products_mf.value and related_products_mf.value.title -%}
+          {%- assign p = related_products_mf.value -%}
+          {%- assign badge_exclusive = false -%}
+          {%- for t in p.tags -%}
+            {%- if t == 'exclusive' or t == 'Exclusive' or t == 'EXCLUSIVE' -%}
+              {%- assign badge_exclusive = true -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- assign rating_val = p.metafields.reviews.rating.value | default: p.metafields.reviews.rating -%}
+          {%- assign rating_count = p.metafields.reviews.rating_count.value | default: p.metafields.reviews.rating_count -%}
+
+          <div class="erf-related__list">
+            <article class="erf-rp-card">
+              <a class="erf-rp-media" href="{{ p.url }}">
+                {%- if p.featured_image -%}
+                  <img src="{{ p.featured_image | image_url: width: 600 }}" alt="{{ p.featured_image.alt | default: p.title | escape }}" loading="lazy">
+                {%- endif -%}
+                {%- if badge_exclusive -%}<span class="erf-rp-badge">EXCLUSIVE</span>{%- endif -%}
+              </a>
+              <div class="erf-rp-content">
+                <h3 class="erf-rp-title"><a href="{{ p.url }}">{{ p.title }}</a></h3>
+
+                {%- if rating_val and rating_count -%}
+                  <div class="erf-rp-rating" aria-label="Rated {{ rating_val }} out of 5">
+                    {%- assign rounded = rating_val | default: 0 | plus: 0 -%}
+                    {%- for i in (1..5) -%}
+                      <svg class="erf-rp-star{% if i <= rounded %} is-on{% endif %}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.2 3.7-1.6-6.9 5.4-4.7-7.1-.6L12 2 9.1 8.8 2 9.4l5.4 4.7-1.6 6.9z" fill="currentColor"/></svg>
+                    {%- endfor -%}
+                    <span class="erf-rp-count">({{ rating_count }})</span>
+                  </div>
+                {%- endif -%}
+
+                <div class="erf-rp-price">
+                  {%- if p.compare_at_price_max > p.price -%}
+                    <span class="erf-rp-price-compare">{{ p.compare_at_price | money }}</span>
+                  {%- endif -%}
+                  <span class="erf-rp-price-now">{{ p.price | money }}</span>
+                </div>
+
+                <a class="erf-rp-btn" href="{{ p.url }}">Shop Now</a>
+              </div>
+            </article>
+          </div>
+          {% assign rendered_count = 1 %}
+        {%- endif -%}
+
+        {% if rendered_count == 0 %}
+          <p class="erf-related__empty">Add “Related products” in the blog post metafields (published on Online Store).</p>
+        {% endif %}
+      </aside>
+    {%- endif -%}
+  </div>
+
+  <!-- YMAL: Figma-style cards; desktop/tablet: 3-column grid; mobile: slider -->
+  {%- if section.settings.enable_ymal -%}
+    <section class="erf-ymal" id="erf-ymal">
+      <div class="erf-ymal__header">
+        <h2 class="erf-ymal__title">{{ section.settings.ymal_heading }}</h2>
+        <a class="erf-ymal__more" href="{{ blog.url }}">{{ section.settings.ymal_learn_more_text }}</a>
+      </div>
+
+      {%- assign ymal_tag_value = ymal_tag | downcase -%}
+      <div class="erf-ymal__track" data-slider>
+        {%- assign shown = 0 -%}
+
+        {%- for other in blog.articles -%}
+          {%- if other.id != article.id -%}
+            {%- assign other_tags_down = '' -%}
+            {%- for t in other.tags -%}{%- assign other_tags_down = other_tags_down | append: t | append: ',' | downcase -%}{%- endfor -%}
+            {%- if ymal_tag_value == '' or other_tags_down contains ymal_tag_value -%}
+              <article class="erf-ymal__card" style="scroll-snap-align: start;">
+                {%- if other.image -%}
+                  <a class="erf-ymal__media" href="{{ other.url }}">
+                    <img src="{{ other.image | image_url: width: 1200 }}" alt="{{ other.image.alt | escape }}" loading="lazy">
+                  </a>
+                {%- endif -%}
+                <div class="erf-ymal__content erf-ymal__content--figma">
+                  <h3 class="erf-ymal__heading erf-ymal__heading--figma"><a href="{{ other.url }}">{{ other.title | upcase }}</a></h3>
+                  <div class="erf-ymal__meta erf-ymal__meta--figma">
+                    <span class="erf-ymal__date">{{ other.published_at | default: other.created_at | date: "%B %d, %Y" }}</span>
+                    {%- if other.author -%}
+                      <span class="erf-ymal__dot">•</span>
+                      <span class="erf-ymal__author">{{ other.author }}</span>
+                    {%- endif -%}
+                  </div>
+                  <p class="erf-ymal__excerpt">{{ other.excerpt | default: other.content | strip_html | truncate: 200 }}</p>
+                  <a class="erf-ymal-btn" href="{{ other.url }}">{{ section.settings.ymal_cta_text }}</a>
+                </div>
+              </article>
+              {%- assign shown = shown | plus: 1 -%}
+            {%- endif -%}
+          {%- endif -%}
+          {%- if shown >= section.settings.ymal_limit -%}{% break %}{%- endif -%}
+        {%- endfor -%}
+
+        {%- if shown == 0 -%}
+          {%- for other in blog.articles -%}
+            {%- if other.id != article.id -%}
+              <article class="erf-ymal__card" style="scroll-snap-align: start;">
+                {%- if other.image -%}
+                  <a class="erf-ymal__media" href="{{ other.url }}">
+                    <img src="{{ other.image | image_url: width: 1200 }}" alt="{{ other.image.alt | escape }}" loading="lazy">
+                  </a>
+                {%- endif -%}
+                <div class="erf-ymal__content erf-ymal__content--figma">
+                  <h3 class="erf-ymal__heading erf-ymal__heading--figma"><a href="{{ other.url }}">{{ other.title | upcase }}</a></h3>
+                  <div class="erf-ymal__meta erf-ymal__meta--figma">
+                    <span class="erf-ymal__date">{{ other.published_at | default: other.created_at | date: "%B %d, %Y" }}</span>
+                    {%- if other.author -%}
+                      <span class="erf-ymal__dot">•</span>
+                      <span class="erf-ymal__author">{{ other.author }}</span>
+                    {%- endif -%}
+                  </div>
+                  <p class="erf-ymal__excerpt">{{ other.excerpt | default: other.content | strip_html | truncate: 200 }}</p>
+                  <a class="erf-ymal-btn" href="{{ other.url }}">{{ section.settings.ymal_cta_text }}</a>
+                </div>
+              </article>
+              {%- assign shown = shown | plus: 1 -%}
+            {%- endif -%}
+            {%- if shown >= section.settings.ymal_limit -%}{% break %}{%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+
+      <div class="erf-ymal__controls">
+        <button type="button" class="erf-ymal__prev" aria-label="Previous">
+          <svg viewBox="0 0 24 24" class="erf-icon"><path d="M15 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <button type="button" class="erf-ymal__next" aria-label="Next">
+          <svg viewBox="0 0 24 24" class="erf-icon"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if section.settings.show_back_link_bottom -%}
+    <div class="erf-article__backwrap">
+      <a class="erf-article__back" href="{{ blog.url }}">← {{ section.settings.back_link_text }}</a>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Elizabeth Ross – Article",
+  "tag": "section",
+  "settings": [
+    { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
+    { "type": "range", "id": "content_max_width", "label": "Max content width (px)", "min": 900, "max": 1600, "step": 10, "default": 1300 },
+    { "type": "range", "id": "desktop_left_width", "label": "Left column width (px)", "min": 180, "max": 320, "step": 10, "default": 240 },
+    { "type": "range", "id": "desktop_right_width", "label": "Right column width (px)", "min": 280, "max": 400, "step": 10, "default": 320 },
+    { "type": "select", "id": "hero_height", "label": "Hero height", "default": "large", "options": [
+      { "value": "compact", "label": "Compact" },
+      { "value": "medium", "label": "Medium" },
+      { "value": "large", "label": "Large" }
+    ]},
+    { "type": "select", "id": "title_align", "label": "Title alignment", "default": "left", "options": [
+      { "value": "left", "label": "Left" },
+      { "value": "center", "label": "Center" }
+    ]},
+
+    { "type": "header", "content": "Table of contents" },
+    { "type": "checkbox", "id": "show_toc", "label": "Show TOC", "default": true },
+    { "type": "text", "id": "toc_title", "label": "TOC title", "default": "In this article:" },
+    { "type": "select", "id": "toc_mode", "label": "TOC mode", "default": "auto", "options": [
+      { "value": "auto", "label": "Auto (from H2/H3)" },
+      { "value": "manual", "label": "Manual (use blocks)" }
+    ]},
+
+    { "type": "header", "content": "Author card" },
+    { "type": "text", "id": "author_title", "label": "Author section title", "default": "About the author:" },
+    { "type": "range", "id": "author_expand_lines", "label": "Collapsed lines (mobile/desktop)", "min": 2, "max": 8, "step": 1, "default": 2 },
+
+    { "type": "header", "content": "Related Products" },
+    { "type": "checkbox", "id": "enable_related", "label": "Enable Related Products", "default": true },
+    { "type": "text", "id": "related_heading", "label": "Heading", "default": "Related Products" },
+    { "type": "range", "id": "related_max", "label": "Max products", "min": 2, "max": 12, "step": 1, "default": 4 },
+
+    { "type": "header", "content": "You May Also Like" },
+    { "type": "checkbox", "id": "enable_ymal", "label": "Enable YMAL", "default": true },
+    { "type": "text", "id": "ymal_heading", "label": "Heading", "default": "You may also like" },
+    { "type": "text", "id": "ymal_learn_more_text", "label": "Learn more link text", "default": "Learn More" },
+    { "type": "text", "id": "ymal_cta_text", "label": "Card CTA text", "default": "Shop Now" },
+    { "type": "range", "id": "ymal_limit", "label": "Number of articles", "min": 3, "max": 6, "step": 1, "default": 3 },
+
+    { "type": "checkbox", "id": "mobile_order_related_above_ymal", "label": "Mobile: place Related Products above You May Also Like", "default": true },
+
+    { "type": "checkbox", "id": "show_back_link_bottom", "label": "Show back to blog at bottom", "default": true },
+    { "type": "text", "id": "back_link_text", "label": "Back link text", "default": "Back to blog" }
+  ],
+  "blocks": [
+    {
+      "type": "toc_item",
+      "name": "TOC item",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text" },
+        { "type": "text", "id": "target_id", "label": "Target ID (e.g., section-1)" }
+      ]
+    }
+  ],
+  "enabled_on": { "templates": ["article"] }
+}
+{% endschema %}
